@@ -30,4 +30,25 @@ public class ProductController {
     public Product geProductById(@PathVariable Long id) {
         return productRepository.findById(id).orElse(null);
     }
+
+    @PutMapping("/{id}")
+    public Product updatedProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setName(updatedProduct.getName());
+                    product.setDescription(updatedProduct.getDescription());
+                    product.setPrice(updatedProduct.getPrice());
+                    product.setImageUrl(updatedProduct.getImageUrl());
+                    return productRepository.save(product);
+                })
+                .orElse(null);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        productRepository.deleteById(id);
+
+    }
+
 }
