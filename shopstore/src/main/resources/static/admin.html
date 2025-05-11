@@ -10,12 +10,35 @@
     />
   </head>
   <body class="bg-light">
+    <!-- Modal Alert -->
     <div
-      id="customAlert"
-      class="alert alert-success d-none position-fixed top-0 start-50 translate-middle-x mt-3 shadow"
-      style="z-index: 1050; width: 300px; text-align: center"
-      role="alert"
-    ></div>
+      class="modal fade"
+      id="customModal"
+      tabindex="-1"
+      aria-labelledby="modalTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="modalTitle">Message</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalMessage">This is a message.</div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container mt-5">
       <h3 class="mt-5">All Products</h3>
       <table class="table table-striped">
@@ -97,7 +120,7 @@
             });
 
             if (response.ok) {
-              showAlert(
+              showModalAlert(
                 editMode
                   ? "Product saved successfully"
                   : "Product added successfully",
@@ -111,7 +134,7 @@
               throw new Error("Error saving product");
             }
           } catch (err) {
-            showAlert("Failed to save product", "danger");
+            showModalAlert("Failed to save product", "danger");
           }
         });
       //
@@ -140,26 +163,6 @@
           });
       }
 
-      function deleteProduct(id, button) {
-        if (!confirm("Are you sure you want to delete this product?")) return;
-
-        fetch(`/api/products/${id}`, {
-          method: "DELETE",
-        })
-          .then((res) => {
-            if (res.ok) {
-              showAlert("Product deleted successfully", "success");
-              loadProducts();
-            } else {
-              throw new Error("Failed to delete product");
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            showAlert("Error deleting product.", "danger");
-          });
-      }
-
       function editProduct(id) {
         fetch(`/api/products/${id}`)
           .then((res) => res.json())
@@ -178,17 +181,86 @@
       let editingProductId = null;
       loadProducts(); //Run on page load
 
-      function showAlert(message, type = "success") {
-        const alertBox = document.getElementById("customAlert");
-        alertBox.className =
-          "alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3 shadow";
-        alertBox.innerText = message;
-        alertBox.classList.remove("d-none");
+      function showModalAlert(message, title = "Alert") {
+        const modalTitle = document.getElementById("modalTitle");
+        const modalMessage = document.getElementById("modalMessage");
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
 
-        setTimeout(() => {
-          alertBox.classList.add("d-none");
-        }, 3000);
+        const myModal = new bootstrap.Modal(
+          document.getElementById("customModal")
+        );
+        myModal.show();
+      }
+
+      let productIdToDelete = null;
+
+      function deleteProduct(id) {
+        productIdToDelete = id;
+
+        const deleteModel = new bootstrap.Modal(
+          document.getElementById("confirmDeleteModal")
+        );
+        deleteModel.show();
+
+        document.getElementById("confirmDeleteBtn").onclick = function () {
+          fetch(`/api/products/${productIdToDelete}`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              if (response.ok) {
+                showModalAlert("Product deleted successfully", "Success");
+                loadProducts();
+              } else {
+                showModalAlert("Failed to delete product", "Error");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              showModalAlert("Error deleting product.", "Error");
+            });
+          deleteModel.hide();
+        };
       }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="confirmDeleteModal"
+      tabindex="-1"
+      aria-labelledby="confirmDeleteTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="confirmDeleteTitle">Confirm Delete</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this product?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button id="confirmDeleteBtn" type="button" class="btn btn-danger">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
