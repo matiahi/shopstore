@@ -10,6 +10,12 @@
     />
   </head>
   <body class="bg-light">
+    <div
+      id="customAlert"
+      class="alert alert-success d-none position-fixed top-0 start-50 translate-middle-x mt-3 shadow"
+      style="z-index: 1050; width: 300px; text-align: center"
+      role="alert"
+    ></div>
     <div class="container mt-5">
       <h3 class="mt-5">All Products</h3>
       <table class="table table-striped">
@@ -91,10 +97,11 @@
             });
 
             if (response.ok) {
-              alert(
+              showAlert(
                 editMode
                   ? "Product saved successfully"
-                  : "Product added successfully"
+                  : "Product added successfully",
+                "success"
               );
               document.getElementById("productForm").reset();
               editMode = false;
@@ -104,8 +111,7 @@
               throw new Error("Error saving product");
             }
           } catch (err) {
-            document.getElementById("result").innerHTML =
-              "<div class='alert alert-danger'> Failed to save product </div>";
+            showAlert("Failed to save product", "danger");
           }
         });
       //
@@ -142,15 +148,15 @@
         })
           .then((res) => {
             if (res.ok) {
-              alert("Product deleted successfully");
+              showAlert("Product deleted successfully", "success");
               loadProducts();
             } else {
-              alert("Failed to delete product.");
+              throw new Error("Failed to delete product");
             }
           })
           .catch((err) => {
-            console.getElementById("result").innerHTML =
-              "<div class='alert alert-danger'>Error deleting product</div>";
+            console.error(err);
+            showAlert("Error deleting product.", "danger");
           });
       }
 
@@ -171,6 +177,18 @@
       let editMode = false;
       let editingProductId = null;
       loadProducts(); //Run on page load
+
+      function showAlert(message, type = "success") {
+        const alertBox = document.getElementById("customAlert");
+        alertBox.className =
+          "alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3 shadow";
+        alertBox.innerText = message;
+        alertBox.classList.remove("d-none");
+
+        setTimeout(() => {
+          alertBox.classList.add("d-none");
+        }, 3000);
+      }
     </script>
   </body>
 </html>

@@ -5,8 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import io.micrometer.common.lang.NonNull;
+import org.springframework.lang.NonNull;
 
 @SpringBootApplication
 public class ShopstoreApplication {
