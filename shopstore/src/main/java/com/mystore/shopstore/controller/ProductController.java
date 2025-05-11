@@ -7,9 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mystore.shopstore.model.Product;
 import com.mystore.shopstore.repository.ProductRepository;
 
-import java.io.IOError;
+import java.nio.file.StandardCopyOption;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -62,13 +67,34 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updatedProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+    public Product updateProduct(
+            @PathVariable Long id,
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("price") String price,
+            @RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
+
         return productRepository.findById(id)
                 .map(product -> {
-                    product.setName(updatedProduct.getName());
-                    product.setDescription(updatedProduct.getDescription());
-                    product.setPrice(updatedProduct.getPrice());
-                    product.setImageUrl(updatedProduct.getImageUrl());
+                    product.setName(name);
+                    product.setDescription(description);
+                    product.setPrice(new BigDecimal(price));
+
+                    if (imageFile != null && !imageFile.isEmpty()) {
+                        try {
+                            String uploadDir = System.getProperty("user.dir") + "/uploads/";
+                            Files.createDirectories(Paths.get(uploadDir));
+                            String filename = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+                            Path filePath = Paths.get(uploadDir + filename);
+                            Files.copy(imageFile.getInputStream(), filePath,
+                                    StandardCopyOption.REPLACE_EXISTING);
+                            product.setImageUrl("/uploads/" + filename);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     return productRepository.save(product);
                 })
                 .orElse(null);

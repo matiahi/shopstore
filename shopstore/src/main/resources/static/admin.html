@@ -11,8 +11,23 @@
   </head>
   <body class="bg-light">
     <div class="container mt-5">
-      <h2 class="mb-4">Add new Product</h2>
+      <h3 class="mt-5">All Products</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <!--Rows will be added dynamically-->
+        </tbody>
+      </table>
 
+      <h3 class="mb-4">Add new Product</h3>
       <form
         id="productForm"
         class="card p-4 shadow-sm bg-white"
@@ -42,11 +57,10 @@
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
       </form>
-
-      <div id="result" class="mt-4"></div>
     </div>
 
     <script>
+      //
       document
         .getElementById("productForm")
         .addEventListener("submit", async function (e) {
@@ -59,29 +73,104 @@
             document.getElementById("description").value
           );
           formData.append("price", document.getElementById("price").value);
-          formData.append("image", document.getElementById("image").files[0]);
+
+          const imageFile = document.getElementById("image").files[0];
+          if (imageFile) {
+            formData.append("image", imageFile);
+          }
+
+          const url = editMode
+            ? `/api/products/${editingProductId}`
+            : "/api/products/upload";
+          const method = editMode ? "PUT" : "POST";
 
           try {
-            const response = await fetch(
-              "http://localhost:8080/api/products/upload",
-              {
-                method: "POST",
-                body: formData,
-              }
-            );
+            const response = await fetch(url, {
+              method: method,
+              body: formData,
+            });
 
             if (response.ok) {
-              document.getElementById("result").innerHTML =
-                "<div class='alert alert-succes'> Product uploaded successfully </div>";
+              alert(
+                editMode
+                  ? "Product saved successfully"
+                  : "Product added successfully"
+              );
               document.getElementById("productForm").reset();
+              editMode = false;
+              editingProductId = null;
+              loadProducts(); // refresh table after save
             } else {
-              throw new Error("Error");
+              throw new Error("Error saving product");
             }
           } catch (err) {
             document.getElementById("result").innerHTML =
-              "<div class='alert alert-danger'> Failed to upload product </div>";
+              "<div class='alert alert-danger'> Failed to save product </div>";
           }
         });
+      //
+      function loadProducts() {
+        const tbody = document.getElementById("productTableBody");
+        tbody.innerHTML = "";
+        fetch("/api/products")
+          .then((res) => res.json())
+          .then((products) => {
+            const tbody = document.getElementById("productTableBody");
+            tbody.innerHTML = "";
+            products.forEach((product) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+              <td><img src="${product.imageUrl}" width="80" height="80" style="object-fit: contain;"></td>
+              <td>${product.name}</td>
+              <td>${product.description}</td>
+              <td>${product.price}</td>
+              <td>
+                  <button class="btn btn-sm btn-warning me-2" onclick="editProduct(${product.id})">Edit</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+              </td>
+              `;
+              tbody.appendChild(row);
+            });
+          });
+      }
+
+      function deleteProduct(id, button) {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+
+        fetch(`/api/products/${id}`, {
+          method: "DELETE",
+        })
+          .then((res) => {
+            if (res.ok) {
+              alert("Product deleted successfully");
+              loadProducts();
+            } else {
+              alert("Failed to delete product.");
+            }
+          })
+          .catch((err) => {
+            console.getElementById("result").innerHTML =
+              "<div class='alert alert-danger'>Error deleting product</div>";
+          });
+      }
+
+      function editProduct(id) {
+        fetch(`/api/products/${id}`)
+          .then((res) => res.json())
+          .then((product) => {
+            document.getElementById("name").value = product.name;
+            document.getElementById("description").value = product.description;
+            document.getElementById("price").value = product.price;
+
+            editMode = true;
+            editingProductId = id;
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+      }
+      let editMode = false;
+      let editingProductId = null;
+      loadProducts(); //Run on page load
     </script>
   </body>
 </html>
