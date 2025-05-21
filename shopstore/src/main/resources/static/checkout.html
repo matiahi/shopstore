@@ -10,93 +10,55 @@
     />
   </head>
   <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <!-- Logo / Brand -->
-        <a class="navbar-brand" href="products.html">AccessoryShop</a>
+    <div id="navbarContainer"></div>
+    <div class="container py-5">
+      <div class="mx-auto p-4 bg-white rounded shadow" style="max-width: 900px">
+        <div class="container mt-5">
+          <h2 class="mb-4">Checkout</h2>
+          <form id="checkoutForm" class="bg-white p-4 shadow rounded">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Full name</label>
+              <input type="text" id="fullName" class="form-control" required />
+            </div>
 
-        <!-- Mobile Toggler -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNavbar"
-          aria-controls="mainNavbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" class="form-control" required />
+            </div>
 
-        <!-- Navbar Links + Cart -->
-        <div class="collapse navbar-collapse" id="mainNavbar">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="products.html">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="admin.html">My Account</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="orders.html">Orders</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.html">Contact Us</a>
-            </li>
-          </ul>
+            <div class="mb-3">
+              <label for="address" class="form-label">Shipping Address</label>
+              <textarea
+                id="address"
+                class="form-control"
+                row="3"
+                required
+              ></textarea>
+            </div>
 
-          <!-- Cart Button -->
-          <button
-            class="btn btn-outline-light position-relative"
-            onclick="showCart()"
-          >
-            🛒 Cart
-            <span
-              id="cartCount"
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            >
-              0
-            </span>
-          </button>
+            <div class="mb-3">
+              <label for="note" class="form-label">Note (Optional)</label>
+              <textarea id="note" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Place Order</button>
+          </form>
+          <div id="confirmation" class="alert alert-success mt-3 d-none">
+            Your order has been placed successfully!
+          </div>
         </div>
-      </div>
-    </nav>
-    <div class="container mt-5">
-      <h2 class="mb-4">Checkout</h2>
-      <form id="checkoutForm" class="bg-white p-4 shadow rounded">
-        <div class="mb-3">
-          <label for="fullName" class="form-label">Full name</label>
-          <input type="text" id="fullName" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
-          <label for="email" class="form-label">Email Address</label>
-          <input type="email" id="email" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
-          <label for="address" class="form-label">Shipping Address</label>
-          <textarea
-            id="address"
-            class="form-control"
-            row="3"
-            required
-          ></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label for="note" class="form-label">Note (Optional)</label>
-          <textarea id="note" class="form-control" rows="2"></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-success">Place Order</button>
-      </form>
-      <div id="confirmation" class="alert alert-success mt-3 d-none">
-        Your order has been placed successfully!
       </div>
     </div>
 
     <script>
+      // Show navbar
+      fetch("navbar.html")
+        .then((res) => res.text())
+        .then((html) => {
+          document.getElementById("navbarContainer").innerHTML = html;
+        });
+
+      // Get user input form and save it
       document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("checkoutForm");
 

@@ -14,6 +14,18 @@ public class Product {
     private BigDecimal price;
     private String imageUrl;
 
+    // To show Active product for customer
+    @Column(nullable = false)
+    private boolean active = true;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public Product() {
 
     }

@@ -10,137 +10,109 @@
     />
   </head>
   <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <!-- Logo / Brand -->
-        <a class="navbar-brand" href="products.html">AccessoryShop</a>
-
-        <!-- Mobile Toggler -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNavbar"
-          aria-controls="mainNavbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+    <div id="navbarContainer"></div>
+    <div class="container py-5">
+      <div class="mx-auto p-4 bg-white rounded shadow" style="max-width: 900px">
+        <!-- Modal Alert -->
+        <div
+          class="modal fade"
+          id="customModal"
+          tabindex="-1"
+          aria-labelledby="modalTitle"
+          aria-hidden="true"
         >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Navbar Links + Cart -->
-        <div class="collapse navbar-collapse" id="mainNavbar">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="products.html">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="admin.html">My Account</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="orders.html">Orders</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.html">Contact Us</a>
-            </li>
-          </ul>
-
-          <!-- Cart Button -->
-          <button
-            class="btn btn-outline-light position-relative"
-            onclick="showCart()"
-          >
-            🛒 Cart
-            <span
-              id="cartCount"
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            >
-              0
-            </span>
-          </button>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Modal Alert -->
-    <div
-      class="modal fade"
-      id="customModal"
-      tabindex="-1"
-      aria-labelledby="modalTitle"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white">
-          <div class="modal-header border-0">
-            <h5 class="modal-title" id="modalTitle">Message</h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header border-0">
+                <h5 class="modal-title" id="modalTitle">Message</h5>
+                <button
+                  type="button"
+                  class="btn-close btn-close-white"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body" id="modalMessage">This is a message.</div>
+              <div class="modal-footer border-0">
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  data-bs-dismiss="modal"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="modal-body" id="modalMessage">This is a message.</div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              OK
+        </div>
+
+        <h3 class="mb-4">Add new Product</h3>
+        <form
+          id="productForm"
+          class="card p-4 shadow-sm bg-white"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="name" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" id="description" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" class="form-control" id="price" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-control">Product Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="image"
+              name="image"
+              accept="image/*"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <div class="container mt-5">
+          <h3 class="mt-5">All Products</h3>
+          <div class="d-flex justify-content-end mb-3">
+            <button id="filterActive" class="btn btn-outline-success me-2">
+              Active Products
+            </button>
+            <button id="filterInactive" class="btn btn-outline-secondary">
+              Inactive Products
             </button>
           </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody">
+              <!--Rows will be added dynamically-->
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-
-    <div class="container mt-5">
-      <h3 class="mt-5">All Products</h3>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="productTableBody">
-          <!--Rows will be added dynamically-->
-        </tbody>
-      </table>
-
-      <h3 class="mb-4">Add new Product</h3>
-      <form
-        id="productForm"
-        class="card p-4 shadow-sm bg-white"
-        enctype="multipart/form-data"
-      >
-        <div class="mb-3">
-          <label class="form-label">Product Name</label>
-          <input type="text" class="form-control" id="name" required />
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Description</label>
-          <textarea class="form-control" id="description" required></textarea>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Price</label>
-          <input type="number" class="form-control" id="price" required />
-        </div>
-        <div class="mb-3">
-          <label class="form-control">Product Image</label>
-          <input
-            type="file"
-            class="form-control"
-            id="image"
-            name="image"
-            accept="image/*"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </form>
     </div>
 
     <script>
+      // Show navbar
+      fetch("navbar.html")
+        .then((res) => res.text())
+        .then((html) => {
+          document.getElementById("navbarContainer").innerHTML = html;
+        });
+
       //
       document
         .getElementById("productForm")
@@ -190,30 +162,62 @@
           }
         });
       //
+      let showOnlyActive = true;
       function loadProducts() {
         const tbody = document.getElementById("productTableBody");
         tbody.innerHTML = "";
-        fetch("/api/products")
+
+        fetch("/api/products/all")
           .then((res) => res.json())
           .then((products) => {
-            const tbody = document.getElementById("productTableBody");
-            tbody.innerHTML = "";
-            products.forEach((product) => {
+            console.log("fetched products:", products);
+            console.log("Filter mode:", showOnlyActive);
+
+            products.forEach((p) =>
+              console.log(`id: ${p.id} | active: ${p.active}`)
+            );
+            const filtered = products.filter(
+              (p) => Boolean(p.active) === showOnlyActive
+
+              //  (p) => (showOnlyActive ? p.active == 1 : p.active == 0)
+            );
+            filtered.forEach((product) => {
               const row = document.createElement("tr");
               row.innerHTML = `
-              <td><img src="${product.imageUrl}" width="80" height="80" style="object-fit: contain;"></td>
+              <td><img src="${
+                product.imageUrl
+              }" width="80" height="80" style="object-fit: contain;"></td>
               <td>${product.name}</td>
               <td>${product.description}</td>
               <td>${product.price}</td>
               <td>
-                  <button class="btn btn-sm btn-warning me-2" onclick="editProduct(${product.id})">Edit</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+                  <button class="btn btn-sm btn-warning me-2" onclick="editProduct(${
+                    product.id
+                  })">Edit</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteProduct(${
+                    product.id
+                  })">Delete</button>
+                  <button class="btn btn-sm ${
+                    product.active ? "btn-secondary" : "btn-success"
+                  }" onclick="toggleProductStatus(${product.id}, ${
+                product.active
+              })"> ${product.active ? "Disable" : "Enable"}</button>
               </td>
               `;
               tbody.appendChild(row);
             });
           });
       }
+      document.getElementById("filterActive").addEventListener("click", () => {
+        showOnlyActive = true;
+        loadProducts();
+      });
+      document
+        .getElementById("filterInactive")
+        .addEventListener("click", () => {
+          showOnlyActive = false;
+          loadProducts();
+        });
 
       function editProduct(id) {
         fetch(`/api/products/${id}`)
@@ -273,6 +277,32 @@
             });
           deleteModel.hide();
         };
+      }
+
+      //To Activate or Diactivate the product by admin
+      function toggleProductStatus(id, currentStatus) {
+        fetch(`/api/products/${id}/status`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ active: !currentStatus }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              const message = currentStatus
+                ? "Product has been disabled"
+                : "Product has been enabled";
+              showModalAlert(message, "Success");
+              loadProducts();
+            } else {
+              showModalAlert("Failed to update product status", "Error");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            showModalAlert("Error updating product status", "Error");
+          });
       }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

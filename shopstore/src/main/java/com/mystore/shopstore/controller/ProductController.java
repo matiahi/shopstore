@@ -1,6 +1,7 @@
 package com.mystore.shopstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -50,13 +52,20 @@ public class ProductController {
         product.setDescription(description);
         product.setPrice(new java.math.BigDecimal(price));
         product.setImageUrl(imageUrl);
+        product.setActive(true);
 
         return productRepository.save(product);
     }
 
-    // GET - get all product
+    // GET - get all product that are Active
     @GetMapping
     public List<Product> getProducts() {
+        return productRepository.findAll().stream().filter(Product::isActive).toList();
+    }
+
+    // GET - get all product for filter
+    @GetMapping("/all")
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
@@ -66,6 +75,7 @@ public class ProductController {
         return productRepository.findById(id).orElse(null);
     }
 
+    // Update Product
     @PutMapping("/{id}")
     public Product updateProduct(
             @PathVariable Long id,
@@ -99,6 +109,19 @@ public class ProductController {
                 })
                 .orElse(null);
 
+    }
+
+    // Add Active/Deactive
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Product> updateProductStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, Boolean> payload) {
+        return productRepository.findById(id).map(product -> {
+            product.setActive(payload.get("active"));
+            Product updated = productRepository.save(product);
+            return ResponseEntity.ok(updated);
+        })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
