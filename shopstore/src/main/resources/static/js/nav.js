@@ -81,5 +81,32 @@
         showCart(); //Redisplay the cart with the updated list
       }
 
+// Run on initial page load
+      window.onload = updateCartCount;
+
+      document
+        .getElementById("cartModal")
+        .addEventListener("hidden.bs.modal", function () {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((el) => el.remove());
+          document.body.classList.remove("modal-open");
+          document.body.style = "";
+        });
+// checkout button
+ function attachCartFunctions () {
+  const checkoutBtn = document
+        .getElementById("checkoutBtn");
+        if (checkoutBtn) {
+          checkoutBtn.addEventListener("click", function () {
+          const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+          }
+          window.location.href = "checkout.html";
+        });
+      }};
+
     
    
