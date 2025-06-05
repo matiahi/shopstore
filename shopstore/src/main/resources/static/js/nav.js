@@ -49,7 +49,8 @@
               "d-flex justify-content-between align-items-center ";
             row.innerHTML = `
                 <div class = "d-flex align-items-center">
-                  <img src = "${item.imageUrl}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: contain;" class = "me-3">
+                  <img src = "${item.imageUrl}" alt="${item.name}" 
+                  style="width: 60px; height: 60px; object-fit: contain;" class = "me-3">
                   <div>
                     <h6 class="mb-0">${item.name}</h6>
                     <small>Price: $${item.price} * ${item.quantity}</small>

@@ -22,18 +22,29 @@ import java.util.UUID;
 @RequestMapping("/api/products")
 public class ProductController {
 
+    // Dependency Injection , Spring will make a object
+    // ProductRepository = new ProductRepository;
+    // @Autowired : find this field from context and inject value
     @Autowired
     private ProductRepository productRepository;
 
+    // POST is a method of HTTP for send request or data to server to do something
+    // or save our data
     // POST - Add new product
     @PostMapping("/upload")
     public Product uploadProduct(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") int price,
+            // this code is for saving image on disk so it may throw exception
+            // MultipartFile is used in Spring and for get uploaded file
             @RequestParam("image") MultipartFile imageFile) throws IOException {
 
         // Path for saving img
+        // System.getProperty("user.dir") : this method return the root directory of the
+        // current project and append the new folder "uploads"
+        // Files.createDirectories : this checks if this path exists or not
+        // Paths.get(uploadDir) : converts the path string into a path Object
         String uploadDir = System.getProperty("user.dir") + "/uploads/";
         java.nio.file.Files.createDirectories(java.nio.file.Paths.get(uploadDir));
 
@@ -57,6 +68,10 @@ public class ProductController {
         return productRepository.save(product);
     }
 
+    // Get is a method of HTTP for send request to server, when we want get
+    // something from server
+    // Get request : in the web world when client or browser want to get data from
+    // server without change or save, they send a get request
     // GET - get all product that are Active
     @GetMapping
     public List<Product> getProducts() {
@@ -75,6 +90,8 @@ public class ProductController {
         return productRepository.findById(id).orElse(null);
     }
 
+    // Put is the update method of HTTP for information on one source like object or
+    // record on database
     // Update Product
     @PutMapping("/{id}")
     public Product updateProduct(
@@ -82,6 +99,7 @@ public class ProductController {
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") String price,
+
             @RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
         return productRepository.findById(id)
